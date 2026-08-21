@@ -5,6 +5,8 @@
 package auth
 
 import (
+	"fmt"
+
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -54,4 +56,26 @@ func LoadConfigFromRegistry() OIDCConfig {
 	}
 
 	return cfg
+}
+
+// SaveConfigToRegistry writes OIDC configuration to the Windows registry
+// at HKLM\SOFTWARE\AmneziaWG\OIDC.
+func SaveConfigToRegistry(cfg OIDCConfig) error {
+	k, _, err := registry.CreateKey(registry.LOCAL_MACHINE, `SOFTWARE\AmneziaWG\OIDC`, registry.SET_VALUE)
+	if err != nil {
+		return fmt.Errorf("failed to create registry key: %w", err)
+	}
+	defer k.Close()
+
+	if err := k.SetStringValue("IssuerURL", cfg.IssuerURL); err != nil {
+		return fmt.Errorf("failed to set IssuerURL: %w", err)
+	}
+	if err := k.SetStringValue("ClientID", cfg.ClientID); err != nil {
+		return fmt.Errorf("failed to set ClientID: %w", err)
+	}
+	if err := k.SetStringValue("WGEasyURL", cfg.WGEasyURL); err != nil {
+		return fmt.Errorf("failed to set WGEasyURL: %w", err)
+	}
+
+	return nil
 }

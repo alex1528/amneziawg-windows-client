@@ -8,6 +8,7 @@ package ui
 import (
 	"log"
 	"strings"
+	"fmt"
 
 	"github.com/lxn/walk"
 
@@ -20,11 +21,29 @@ import (
 // TryOIDCProvision attempts to auto-provision a tunnel via OIDC login.
 // Called from RunUI after the manage window is created.
 func TryOIDCProvision(mtw *ManageTunnelsWindow) bool {
+	// Recover from any panic to prevent crashing the entire application.
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("OIDC: panic recovered: %v", r)
+			showErrorCustom(mtw,
+				"OIDC Error",
+				fmt.Sprintf("An unexpected error occurred during OIDC provisioning: %v", r))
+		}
+	}()
+
 	provisioner := NewOIDCProvisioner(mtw)
 
 	if !provisioner.IsConfigured() {
 		log.Println("OIDC: not configured, skipping auto-provision")
-		return false
+		// Show settings dialog for first-time configuration
+		if !RunOIDCSettingsDialog(mtw) {
+			return false
+		}
+		// Reload config after user saves settings
+		provisioner.cfg = auth.LoadConfigFromRegistry()
+		if !provisioner.IsConfigured() {
+			return false
+		}
 	}
 
 	tunnels, err := manager.IPCClientTunnels()

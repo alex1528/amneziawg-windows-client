@@ -49,7 +49,7 @@ func (p *OIDCProvisioner) Run() (configName string, configData string, err error
 
 	// Step 1: Try to load existing token
 	token, err := auth.LoadToken()
-	if err == nil && token.ExpiresAt.After(time.Now()) {
+	if err == nil && token != nil && token.ExpiresAt.After(time.Now()) {
 		configName, configData, err = p.fetchConfig(token)
 		if err == nil {
 			return configName, configData, nil
