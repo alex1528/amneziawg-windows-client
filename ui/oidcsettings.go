@@ -29,10 +29,6 @@ type OIDCSettingsDialog struct {
 // Returns true if the user saved valid settings.
 func RunOIDCSettingsDialog(owner walk.Form) bool {
 	dlg := new(OIDCSettingsDialog)
-	layout := walk.NewGridLayout()
-	layout.SetColumns(2)
-	layout.SetMargins(walk.Margins{10, 10, 10, 10})
-	layout.SetSpacing(6)
 
 	var err error
 	if dlg.Dialog, err = walk.NewDialog(owner); err != nil {
@@ -42,47 +38,62 @@ func RunOIDCSettingsDialog(owner walk.Form) bool {
 	defer dlg.Dispose()
 
 	dlg.SetTitle(l18n.Sprintf("OIDC Settings"))
-	dlg.SetLayout(layout)
-	dlg.SetMinMaxSize(walk.Size{450, 0}, walk.Size{600, 0})
+	dlg.SetMinMaxSize(walk.Size{450, 220}, walk.Size{600, 300})
+	dlg.SetSize(walk.Size{480, 250})
+
+	vlayout := walk.NewVBoxLayout()
+	vlayout.SetMargins(walk.Margins{10, 10, 10, 10})
+	vlayout.SetSpacing(8)
+	dlg.SetLayout(vlayout)
 
 	// Load current config
 	cfg := auth.LoadConfigFromRegistry()
 
-	// IssuerURL
-	lblIssuer, _ := walk.NewLabel(dlg)
+	// IssuerURL row
+	issuerRow, _ := walk.NewComposite(dlg)
+	hbl1 := walk.NewHBoxLayout()
+	hbl1.SetMargins(walk.Margins{})
+	issuerRow.SetLayout(hbl1)
+	lblIssuer, _ := walk.NewLabel(issuerRow)
 	lblIssuer.SetText(l18n.Sprintf("Issuer URL:"))
-	dlg.issuerEdit, _ = walk.NewLineEdit(dlg)
+	lblIssuer.SetMinMaxSize(walk.Size{90, 0}, walk.Size{90, 0})
+	dlg.issuerEdit, _ = walk.NewLineEdit(issuerRow)
 	dlg.issuerEdit.SetText(cfg.IssuerURL)
 	dlg.issuerEdit.SetCueBanner("https://sso.example.com/application/o/app-slug/")
 
-	// ClientID
-	lblClient, _ := walk.NewLabel(dlg)
+	// ClientID row
+	clientRow, _ := walk.NewComposite(dlg)
+	hbl2 := walk.NewHBoxLayout()
+	hbl2.SetMargins(walk.Margins{})
+	clientRow.SetLayout(hbl2)
+	lblClient, _ := walk.NewLabel(clientRow)
 	lblClient.SetText(l18n.Sprintf("Client ID:"))
-	dlg.clientEdit, _ = walk.NewLineEdit(dlg)
+	lblClient.SetMinMaxSize(walk.Size{90, 0}, walk.Size{90, 0})
+	dlg.clientEdit, _ = walk.NewLineEdit(clientRow)
 	dlg.clientEdit.SetText(cfg.ClientID)
 	dlg.clientEdit.SetCueBanner("wg-easy-desktop")
 
-	// WGEasyURL
-	lblWgeasy, _ := walk.NewLabel(dlg)
+	// WGEasyURL row
+	wgeasyRow, _ := walk.NewComposite(dlg)
+	hbl3 := walk.NewHBoxLayout()
+	hbl3.SetMargins(walk.Margins{})
+	wgeasyRow.SetLayout(hbl3)
+	lblWgeasy, _ := walk.NewLabel(wgeasyRow)
 	lblWgeasy.SetText(l18n.Sprintf("WG-Easy URL:"))
-	dlg.wgeasyEdit, _ = walk.NewLineEdit(dlg)
+	lblWgeasy.SetMinMaxSize(walk.Size{90, 0}, walk.Size{90, 0})
+	dlg.wgeasyEdit, _ = walk.NewLineEdit(wgeasyRow)
 	dlg.wgeasyEdit.SetText(cfg.WGEasyURL)
 	dlg.wgeasyEdit.SetCueBanner("https://wg-easy.example.com")
 
-	// Spacer
-	spacer, _ := walk.NewComposite(dlg)
-	spacer.SetMinMaxSize(walk.Size{0, 10}, walk.Size{0, 10})
+	// Button row
+	buttonRow, _ := walk.NewComposite(dlg)
+	hbl4 := walk.NewHBoxLayout()
+	hbl4.SetMargins(walk.Margins{0, 10, 0, 0})
+	buttonRow.SetLayout(hbl4)
 
-	// Buttons
-	buttonContainer, _ := walk.NewComposite(dlg)
-	hLayout := walk.NewHBoxLayout()
-	hLayout.SetMargins(walk.Margins{})
-	buttonContainer.SetLayout(hLayout)
-	layout.SetRange(buttonContainer, walk.Rectangle{0, 4, 2, 1})
+	walk.NewHSpacer(buttonRow)
 
-	walk.NewHSpacer(buttonContainer)
-
-	dlg.saveButton, _ = walk.NewPushButton(buttonContainer)
+	dlg.saveButton, _ = walk.NewPushButton(buttonRow)
 	dlg.saveButton.SetText(l18n.Sprintf("Save"))
 	dlg.saveButton.Clicked().Attach(func() {
 		issuer := dlg.issuerEdit.Text()
@@ -115,7 +126,7 @@ func RunOIDCSettingsDialog(owner walk.Form) bool {
 		dlg.Accept()
 	})
 
-	dlg.cancelButton, _ = walk.NewPushButton(buttonContainer)
+	dlg.cancelButton, _ = walk.NewPushButton(buttonRow)
 	dlg.cancelButton.SetText(l18n.Sprintf("Cancel"))
 	dlg.cancelButton.Clicked().Attach(func() {
 		dlg.Cancel()
