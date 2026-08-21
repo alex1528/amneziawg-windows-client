@@ -133,7 +133,7 @@ func (p *OIDCProvisioner) fetchConfig(token *auth.AuthResult) (string, string, e
 		}
 	}
 
-	conf, err := client.GetConfiguration(targetClient.ID)
+	conf, err := client.GetConfiguration(targetClient.ID.String())
 	if err != nil {
 		return "", "", fmt.Errorf("get configuration: %w", err)
 	}

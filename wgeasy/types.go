@@ -5,11 +5,14 @@
 
 package wgeasy
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // WGClient represents a WireGuard client entry from wg-easy API.
 type WGClient struct {
-	ID        string `json:"id"`
+	ID        json.Number `json:"id"`
 	Name      string `json:"name"`
 	Enabled   bool   `json:"enabled"`
 	Address   string `json:"address"`
