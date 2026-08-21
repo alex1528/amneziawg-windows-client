@@ -1,6 +1,6 @@
 #!/bin/sh
 # =============================================================================
-# post-commit: 每次提交后自动创建递增语义化版本 tag，并同步 make_deb.sh VERSION
+# post-commit: 每次提交后自动创建递增语义化版本 tag，并同步 version/version.go
 #
 # 激活方式（克隆后执行一次）:
 #   git config core.hooksPath .githooks
@@ -10,7 +10,7 @@
 # =============================================================================
 set -eu
 
-# 防止递归调用（git tag 本身不会触发 post-commit，此处作为额外保险）
+# 防止递归调用
 if [ "${SKIP_AUTO_TAG:-0}" = "1" ]; then
     exit 0
 fi
@@ -38,12 +38,12 @@ else
 	base_version="0.0.0"
 fi
 
-# 解析 major.minor.patch（严格十进制整数）
+# 解析 major.minor.patch
 IFS='.' read -r major minor patch <<EOF
 $base_version
 EOF
 
-# 确保变量为有效十进制整数，否则归零
+# 确保变量为有效十进制整数
 case "$major" in ''|*[!0-9]*) major=0 ;; esac
 case "$minor" in ''|*[!0-9]*) minor=0 ;; esac
 case "$patch" in ''|*[!0-9]*) patch=0 ;; esac
@@ -61,6 +61,30 @@ fi
 
 next_tag="${major}.${minor}.${patch}"
 
+# 同步 version/version.go 中的 Number 常量
+sync_version_go() {
+    target_file="version/version.go"
+    [ -f "$target_file" ] || return 0
+
+    new_ver="$next_tag"
+    tmp_file="$(mktemp)"
+
+    sed "s/Number = \"[^\"]*\"/Number = \"${new_ver}\"/" "$target_file" > "$tmp_file" || {
+        rm -f "$tmp_file"
+        return 1
+    }
+
+    if ! cmp -s "$target_file" "$tmp_file"; then
+        mv "$tmp_file" "$target_file"
+        git add -- "$target_file"
+        SKIP_AUTO_TAG=1 git commit --amend --no-edit --no-verify >/dev/null 2>&1 || true
+        printf '[post-commit] synced %s Number=%s\n' "$target_file" "$new_ver"
+    else
+        rm -f "$tmp_file"
+    fi
+}
+
+# 同步 make_deb.sh VERSION（如存在）
 sync_make_deb_version() {
     target_file="make_deb.sh"
     [ -f "$target_file" ] || return 0
@@ -94,13 +118,14 @@ sync_make_deb_version() {
     fi
 }
 
-# dry-run 模式：仅打印下一个 tag，不实际创建
+# dry-run 模式
 if [ "${1:-}" = "--dry-run" ]; then
     printf '%s\n' "$next_tag"
     exit 0
 fi
 
 # 先同步版本文件，再打 tag
+sync_version_go || true
 sync_make_deb_version || true
 
 # 创建带注释 tag（无 v 前缀）
