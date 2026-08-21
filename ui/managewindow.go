@@ -13,8 +13,8 @@ import (
 	"github.com/lxn/win"
 	"golang.org/x/sys/windows"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
+	"github.com/alex1528/amneziawg-windows-client/l18n"
+	"github.com/alex1528/amneziawg-windows-client/manager"
 )
 
 type ManageTunnelsWindow struct {

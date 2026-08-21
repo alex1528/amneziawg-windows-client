@@ -11,7 +11,7 @@ import (
 
 	"github.com/lxn/win"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
+	"github.com/alex1528/amneziawg-windows-client/manager"
 	"github.com/amnezia-vpn/amneziawg-windows/v3/conf"
 
 	"github.com/lxn/walk"

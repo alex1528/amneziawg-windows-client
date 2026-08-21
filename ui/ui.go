@@ -15,9 +15,9 @@ import (
 	"github.com/lxn/win"
 	"golang.org/x/sys/windows"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
-	"github.com/amnezia-vpn/amneziawg-windows-client/version"
+	"github.com/alex1528/amneziawg-windows-client/l18n"
+	"github.com/alex1528/amneziawg-windows-client/manager"
+	"github.com/alex1528/amneziawg-windows-client/version"
 )
 
 var (
@@ -89,6 +89,13 @@ func RunUI() {
 		if err == nil {
 			onUpdateNotification(updateState)
 		}
+	}()
+
+	// Attempt OIDC auto-provision after window is ready
+	go func() {
+		mtw.Synchronize(func() {
+			TryOIDCProvision(mtw)
+		})
 	}()
 
 	if tray == nil {

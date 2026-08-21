@@ -8,9 +8,9 @@ package ui
 import (
 	"github.com/lxn/walk"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
-	"github.com/amnezia-vpn/amneziawg-windows-client/updater"
+	"github.com/alex1528/amneziawg-windows-client/l18n"
+	"github.com/alex1528/amneziawg-windows-client/manager"
+	"github.com/alex1528/amneziawg-windows-client/updater"
 )
 
 type UpdatePage struct {
