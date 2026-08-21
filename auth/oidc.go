@@ -72,7 +72,8 @@ func Login(ctx context.Context, cfg OIDCConfig) (*AuthResult, error) {
 	)
 
 	// Open the browser for user login.
-	if err := exec.Command("cmd", "/c", "start", authURL).Start(); err != nil {
+	// Use rundll32 to avoid cmd.exe interpreting '&' in the URL as command separator.
+	if err := exec.Command("rundll32", "url.dll,FileProtocolHandler", authURL).Start(); err != nil {
 		return nil, fmt.Errorf("failed to open browser: %w", err)
 	}
 
