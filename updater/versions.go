@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/version"
+	"github.com/alex1528/amneziawg-windows-client/version"
 )
 
 func versionNewerThanUs(candidate string) (bool, error) {

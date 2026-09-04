@@ -12,7 +12,7 @@ import (
 	"github.com/lxn/win"
 	"golang.org/x/sys/windows"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
+	"github.com/alex1528/amneziawg-windows-client/l18n"
 )
 
 func raise(hwnd win.HWND) {

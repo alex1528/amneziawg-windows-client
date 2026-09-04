@@ -37,3 +37,26 @@ executing these scripts.
 ```
 > reg add HKLM\Software\AmneziaWG /v DangerousScriptExecution /t REG_DWORD /d 1 /f
 ```
+
+#### `HKLM\Software\AmneziaWG\OIDC`
+
+These keys configure the OIDC automatic login and provisioning feature. When all
+three values are empty or absent, compile-time defaults are used (see
+[`oidc.md`](oidc.md) for details).
+
+| Value | Type | Description | Default |
+|-------|------|-------------|---------|
+| `IssuerURL` | REG_SZ | Authentik OIDC discovery URL | `https://sso.gslb.vip/application/o/wg-easy-desktop/` |
+| `ClientID` | REG_SZ | OAuth2 Public Client ID | `wg-easy-desktop` |
+| `WGEasyURL` | REG_SZ | wg-easy server base URL | `https://wg-easy.verycloud.cn` |
+
+To pre-configure OIDC for all users on a machine:
+
+```
+> reg add HKLM\Software\AmneziaWG\OIDC /v IssuerURL /t REG_SZ /d "https://sso.example.com/application/o/wg-easy/" /f
+> reg add HKLM\Software\AmneziaWG\OIDC /v ClientID /t REG_SZ /d "wg-easy-desktop" /f
+> reg add HKLM\Software\AmneziaWG\OIDC /v WGEasyURL /t REG_SZ /d "https://wg-easy.example.com" /f
+```
+
+To reset to compile-time defaults, delete the `OIDC` subkey or use the
+"Reset to Defaults" button in the OIDC Settings dialog.

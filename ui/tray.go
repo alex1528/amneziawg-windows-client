@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
+	"github.com/alex1528/amneziawg-windows-client/l18n"
+	"github.com/alex1528/amneziawg-windows-client/manager"
 	"github.com/amnezia-vpn/amneziawg-windows/v3/conf"
 
 	"github.com/lxn/walk"
@@ -84,6 +84,7 @@ func (tray *Tray) setup() error {
 		{label: l18n.Sprintf("&Manage tunnels…"), handler: tray.onManageTunnels, enabled: true, defawlt: true},
 		{label: l18n.Sprintf("&Import tunnel(s) from file…"), handler: tray.onImport, enabled: true, hidden: !IsAdmin},
 		{separator: true},
+		{label: l18n.Sprintf("&OIDC Settings…"), handler: tray.onOIDCSettings, enabled: true, hidden: !IsAdmin},
 		{label: l18n.Sprintf("&About AmneziaWG…"), handler: tray.onAbout, enabled: true},
 		{label: l18n.Sprintf("E&xit"), handler: onQuit, enabled: true, hidden: !IsAdmin},
 	} {
@@ -389,4 +390,9 @@ func (tray *Tray) onAbout() {
 func (tray *Tray) onImport() {
 	raise(tray.mtw.Handle())
 	tray.mtw.tunnelsPage.onImport()
+}
+
+func (tray *Tray) onOIDCSettings() {
+	raise(tray.mtw.Handle())
+	RunOIDCSettingsDialog(tray.mtw)
 }

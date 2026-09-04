@@ -11,7 +11,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/updater"
+	"github.com/alex1528/amneziawg-windows-client/updater"
 	"github.com/amnezia-vpn/amneziawg-windows/v3/conf"
 )
 

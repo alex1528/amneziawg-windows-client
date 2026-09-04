@@ -13,8 +13,8 @@ import (
 	"github.com/lxn/win"
 	"golang.org/x/sys/windows"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
+	"github.com/alex1528/amneziawg-windows-client/l18n"
+	"github.com/alex1528/amneziawg-windows-client/manager"
 )
 
 type ManageTunnelsWindow struct {
@@ -23,6 +23,7 @@ type ManageTunnelsWindow struct {
 	tabs        *walk.TabWidget
 	tunnelsPage *TunnelsPage
 	logPage     *LogPage
+	oidcPage    *OIDCPage
 	updatePage  *UpdatePage
 
 	tunnelChangedCB *manager.TunnelChangeCallback
@@ -108,6 +109,11 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 		return nil, err
 	}
 	mtw.tabs.Pages().Add(mtw.logPage.TabPage)
+
+	if mtw.oidcPage, err = NewOIDCPage(); err != nil {
+		return nil, err
+	}
+	mtw.tabs.Pages().Add(mtw.oidcPage.TabPage)
 
 	mtw.tunnelChangedCB = manager.IPCClientRegisterTunnelChange(mtw.onTunnelChange)
 	globalState, _ := manager.IPCClientGlobalState()
